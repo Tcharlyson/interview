@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  front:
+    build: docker/node
+    networks:
+      - web
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/srv/app
+    command: >
+      sh -c "cd /srv/app
+      && yarn
+      && yarn serve"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.interview.rule=Host(`interview.localhost`)"
+      - "traefik.http.services.interview.loadbalancer.server.port=8080"
+
+networks:
+  web:
+    external: true
